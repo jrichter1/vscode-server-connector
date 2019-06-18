@@ -289,9 +289,8 @@
     "path-exists": "^3.0.0",
     "pify": "4.0.0",
     "portfinder": "^1.0.20",
-    "rsp-client": "^0.16.0",
+    "rsp-client": "jrichter1/rsp-client#simrel",
     "tmp": "^0.1.0",
-    "vscode-jsonrpc": "^4.0.0",
     "vscode-languageclient": "^5.1.0",
     "wait-on": "^3.0.1"
   }
