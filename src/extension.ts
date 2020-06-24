@@ -1,57 +1,38 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the EPL v2.0 License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
+import { RSP_PROVIDER_ID, RSP_PROVIDER_NAME } from './constants';
+import { ExtensionAPI } from './extensionApi';
 import * as vscode from 'vscode';
-import { ServersViewTreeDataProvider } from './serverExplorer';
-//import { LanguageClient, LanguageClientOptions, RevealOutputChannelOn, StreamInfo} from 'vscode-languageclient';
-import * as net from 'net';
-import * as rpc from 'vscode-jsonrpc';
-import { ServerAddedNotification } from './protocol';
+import { retrieveUIExtension, RSPController, RSPServer, ServerState } from 'vscode-server-connector-api';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext): Promise<RSPController> {
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "adapters-extension" is now active!');
+    const api: ExtensionAPI = new ExtensionAPI();
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
-    });
-    
-    let connectionInfo = {
-        port: 27511,
-        host:"localhost"
+    const rsp: RSPServer = {
+        state: ServerState.UNKNOWN,
+        type: {
+            id: RSP_PROVIDER_ID,
+            visibilename: RSP_PROVIDER_NAME
+        }
     };
+    const serverConnectorUI = await retrieveUIExtension();
 
-    let socket = net.connect(connectionInfo).on('connect', async () => {
-        let connection = rpc.createMessageConnection(
-            new rpc.StreamMessageReader(socket),
-            new rpc.StreamMessageWriter(socket));
-        
-        connection.listen();
-       
-        connection.onNotification(ServerAddedNotification.type, handle => {
-            serversData.refresh();
-        });
+    if (serverConnectorUI.available) {
+        serverConnectorUI.api.registerRSPProvider(rsp);
+    }
 
-        const serversData = new ServersViewTreeDataProvider(connection);
-        vscode.window.registerTreeDataProvider('servers', serversData);
-        vscode.commands.registerCommand('servers.addLocation', () => serversData.addLocation());
-
-        context.subscriptions.push(connection);
-    });
-
-    context.subscriptions.push(disposable);
+    return api;
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
+export async function deactivate() {
+    const serverConnector = await retrieveUIExtension();
+
+    if (serverConnector.available) {
+        serverConnector.api.deregisterRSPProvider(RSP_PROVIDER_ID);
+    }
 }

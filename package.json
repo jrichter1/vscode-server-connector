@@ -1,67 +1,80 @@
 {
-    "name": "adapters-extension",
-    "displayName": "atlas",
-    "description": "Connects vscode with different server adapters",
-    "version": "0.0.1",
-    "publisher": "mohitsuman",
-    "engines": {
-        "vscode": "^1.23.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:extension.sayHello",
-        "onView:servers"
-    ],
-    "main": "./out/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "servers.addLocation",
-                "title": "Add Server Location ...",
-                "icon": "resources/dark/add-location.svg"
-            },
-            {
-                "command": "extension.sayHello",
-                "title": "Hello World"
-            }
-        ],
-        "views": {
-            "explorer": [
-                {
-                    "id": "servers",
-                    "name": "Servers"
-                }
-            ]
-        },
-        "menus": {
-            "view/title": [
-                {
-                    "command": "servers.addLocation",
-                    "when": "view == servers",
-                    "group": "navigation"
-                }
-            ]
-        }
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "tslint": "^5.8.0",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
-    },
-    "dependencies": {
-        "npm": "^6.0.1",
-        "vscode-jsonrpc": "^3.6.2",
-        "vscode-languageclient": "^4.1.4"
-    }
+  "name": "vscode-server-connector",
+  "displayName": "Server Connector",
+  "description": "Starts, stops and deploys to Red Hat server and runtime products.",
+  "version": "0.20.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "publisher": "redhat",
+  "author": "Red Hat",
+  "preview": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redhat-developer/vscode-server-connector.git"
+  },
+  "bugs": "https://github.com/redhat-developer/vscode-server-connector/issues/",
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "activationEvents": [
+    "onView:servers"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "server",
+    "runtimes",
+    "middleware",
+    "adapters",
+    "jboss",
+    "wildfly"
+  ],
+  "icon": "images/jboss.eap.png",
+  "main": "./out/src/extension",
+  "scripts": {
+    "package": "node ./build/package.js",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
+    "coverage:upload": "codecov -f coverage/coverage-final.json",
+    "build": "npm run compile && npm run package"
+  },
+  "extensionDependencies": [
+    "redhat.vscode-rsp-ui"
+  ],
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.10",
+    "@types/sinon": "^7.0.13",
+    "chai": "^4.2.0",
+    "codecov": "^3.5.0",
+    "decache": "^4.5.1",
+    "decompress": "^4.2.0",
+    "download": "^7.1.0",
+    "glob": "^7.1.4",
+    "istanbul": "^0.4.5",
+    "mocha": "^6.1.4",
+    "mocha-jenkins-reporter": "^0.4.1",
+    "remap-istanbul": "^0.13.0",
+    "sinon": "^7.3.2",
+    "sinon-chai": "^3.3.0",
+    "tslint": "^5.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.5.2",
+    "vscode": "^1.1.35"
+  },
+  "dependencies": {
+    "expand-home-dir": "0.0.3",
+    "find-java-home": "^0.2.0",
+    "fs-extra": "7.0.0",
+    "path-exists": "^3.0.0",
+    "portfinder": "^1.0.20",
+    "rsp-client": "^0.15.0",
+    "vscode-server-connector-api": "0.1.5",
+    "wait-on": "^3.0.1"
+  }
 }
